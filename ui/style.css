@@ -1,0 +1,93 @@
+/* html/style.css */
+body, html { 
+    margin: 0; 
+    padding: 0; 
+    background: #00000000; /* TRANSPARENT CAUSE WE USE SPOTLIGHT UI CONTAINER */
+}
+
+#spotlight-ui {
+    position: absolute;
+    top: 10%; 
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a1a1a; /* dark panel background */
+    color: #e2e8f0; /* light text */
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+    width: 300px;
+    pointer-events: none;
+    display: none;
+    border: 1px solid #333;
+    overflow: hidden;
+}
+
+#spotlight-ui.focused { pointer-events: auto; }
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: #111827; /* even darker header */
+    color: #f9fafb; /* light header text */
+    font-weight: 600;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.header span { 
+    font-size: 17px;
+    letter-spacing: 0.25px;
+}
+
+.header button {
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    color: rgba(255,255,255,0.7);
+    cursor: pointer;
+    padding: 0 8px;
+    transition: all 0.2s ease;
+}
+
+.header button:hover {
+    color: #ffffff;
+    transform: scale(1.1);
+}
+
+.buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 20px;
+}
+
+.buttons button {
+    padding: 14px 0;
+    background: #2d2d2d; /* darker buttons */
+    border: 1px solid #3c3c3c;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #cbd5e1;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+.buttons button:hover {
+    background: #3c3c3c;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.05);
+}
+
+.buttons button.active {
+    background: #2563eb; /* bright blue highlight */
+    color: white;
+    border-color: #2563eb;
+    box-shadow: 0 2px 12px rgba(37, 99, 235, 0.4);
+}
+
+.buttons button:active {
+    transform: translateY(0);
+}
