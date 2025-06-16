@@ -5,8 +5,8 @@ games { 'gta5' }
 
 author 'Azure'
 description 'Glint is a Fivem/FivePD modification that allows players to utilize fully controllable spotlights, alley lights, takedowns on their vehicles.'
-version '1.2.0'
---shared_script 'config.lua'
+version '1.5.0'
+shared_script 'config.lua'
 client_script 'client.lua'
 server_script 'server.lua'
 ui_page 'ui/index.html'

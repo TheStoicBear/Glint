@@ -5,7 +5,101 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spotlight UI</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        /* html/style.css */
+body, html { 
+    margin: 0; 
+    padding: 0; 
+    background: #00000000; /* TRANSPARENT CAUSE WE USE SPOTLIGHT UI CONTAINER */
+}
+
+#spotlight-ui {
+    position: absolute;
+    top: 10%; 
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a1a1a; /* dark panel background */
+    color: #e2e8f0; /* light text */
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+    width: 300px;
+    pointer-events: none;
+    display: none;
+    border: 1px solid #333;
+    overflow: hidden;
+}
+
+#spotlight-ui.focused { pointer-events: auto; }
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: #111827; /* even darker header */
+    color: #f9fafb; /* light header text */
+    font-weight: 600;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.header span { 
+    font-size: 17px;
+    letter-spacing: 0.25px;
+}
+
+.header button {
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    color: rgba(255,255,255,0.7);
+    cursor: pointer;
+    padding: 0 8px;
+    transition: all 0.2s ease;
+}
+
+.header button:hover {
+    color: #ffffff;
+    transform: scale(1.1);
+}
+
+.buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 20px;
+}
+
+.buttons button {
+    padding: 14px 0;
+    background: #2d2d2d; /* darker buttons */
+    border: 1px solid #3c3c3c;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #cbd5e1;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+.buttons button:hover {
+    background: #3c3c3c;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.05);
+}
+
+.buttons button.active {
+    background: #2563eb; /* bright blue highlight */
+    color: white;
+    border-color: #2563eb;
+    box-shadow: 0 2px 12px rgba(37, 99, 235, 0.4);
+}
+
+.buttons button:active {
+    transform: translateY(0);
+}
+    </style>
 </head>
 <body>
     <div id="spotlight-ui">
@@ -20,6 +114,78 @@
             <button id="allBtn">All Lights</button>
         </div>
     </div>
-    <script src="script.js"></script>
+    <script>
+        
+// html/script.js
+let isDragging = false;
+let dragOffsetX = 0;
+let dragOffsetY = 0;
+const ui = document.getElementById('spotlight-ui');
+const header = document.querySelector('#spotlight-ui .header');
+
+window.addEventListener('message', (e) => {
+    const d = e.data;
+    const floodBtn = document.getElementById('floodBtn');
+    const alleyBtn = document.getElementById('alleyBtn');
+    const trackBtn = document.getElementById('trackBtn');
+
+    if (d.action === 'open') ui.style.display = 'block';
+    if (d.action === 'update') {
+        floodBtn.classList.toggle('active', d.flood);
+        alleyBtn.classList.toggle('active', d.alley);
+        trackBtn.classList.toggle('active', d.track);
+    }
+    if (d.action === 'focus') ui.classList.toggle('focused', d.focus);
+    if (d.action === 'close') {
+        ui.style.display = 'none';
+        ui.classList.remove('focused');
+    }
+});
+
+
+
+// All Lights toggle
+document.getElementById('allBtn').onclick = () => {
+    fetch(`https://${GetParentResourceName()}/toggleAll`, { method: 'POST' });
+};
+
+document.getElementById('floodBtn').onclick = () => {
+    fetch(`https://${GetParentResourceName()}/toggleFlood`, { method: 'POST' });
+};
+
+document.getElementById('alleyBtn').onclick = () => {
+    fetch(`https://${GetParentResourceName()}/toggleAlley`, { method: 'POST' });
+};
+
+document.getElementById('trackBtn').onclick = () => {
+    fetch(`https://${GetParentResourceName()}/toggleTrack`, { method: 'POST' });
+};
+
+document.getElementById('closeBtn').onclick = () => {
+    fetch(`https://${GetParentResourceName()}/closeUI`, { method: 'POST' });
+};
+
+// ESC to unfocus
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && ui.classList.contains('focused')) {
+        fetch(`https://${GetParentResourceName()}/escape`, { method: 'POST' });
+    }
+});
+
+// Dragging logic
+header.addEventListener('mousedown', e => {
+    if (!ui.classList.contains('focused')) return;
+    isDragging = true;
+    const rect = ui.getBoundingClientRect();
+    dragOffsetX = e.clientX - rect.left;
+    dragOffsetY = e.clientY - rect.top;
+});
+document.addEventListener('mouseup', () => isDragging = false);
+document.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    ui.style.left = `${e.clientX - dragOffsetX}px`;
+    ui.style.top = `${e.clientY - dragOffsetY}px`;
+});
+    </script>
 </body>
 </html>
